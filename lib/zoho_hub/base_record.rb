@@ -209,6 +209,15 @@ module ZohoHub
       build_response(body)
     end
 
+    def notes
+      path = File.join(self.class.request_path, id, 'Notes')
+      body = get(path)
+      response = build_response(body)
+      response.data.map do |data_note|
+        ZohoHub::Note.new(data_note)
+      end
+    end
+
     def blueprint_transition(transition_id, data = {})
       body = put(File.join(self.class.request_path, id, 'actions/blueprint'),
                  blueprint: [{ transition_id: transition_id, data: data }])
@@ -240,5 +249,13 @@ module ZohoHub
     def build_response(body)
       self.class.build_response(body)
     end
+  end
+
+  class Note < BaseRecord
+    attributes :id, :created_by, :modified_by, :owner, :parent_id, :created_time, :voice_note,
+               :note_title, :note_content
+
+    attribute_translation id: :id
+    attr_accessor :content_type, :file
   end
 end
