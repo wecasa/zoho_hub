@@ -38,5 +38,19 @@ RSpec.describe ZohoHub::BaseRecord do
         expect(notes.first.class).to eq ZohoHub::Note
       end
     end
+
+    context 'without any notes' do
+      before do
+        allow(test_instance).to receive(:id).and_return('2024207000331917003')
+      end
+
+      it 'returns empty array' do
+        VCR.use_cassette('notes_get_none') do
+          notes = test_instance.notes
+          expect(notes.class).to eq Array
+          expect(notes).to be_empty
+        end
+      end
+    end
   end
 end

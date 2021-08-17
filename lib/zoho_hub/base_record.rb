@@ -215,7 +215,7 @@ module ZohoHub
       response = build_response(body)
       response.data.map do |data_note|
         ZohoHub::Note.new(data_note)
-      end
+      end || []
     end
 
     def blueprint_transition(transition_id, data = {})
