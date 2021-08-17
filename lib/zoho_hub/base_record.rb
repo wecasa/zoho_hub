@@ -253,7 +253,7 @@ module ZohoHub
 
   class Note < BaseRecord
     attributes :id, :created_by, :modified_by, :owner, :parent_id, :created_time, :voice_note,
-               :note_title, :note_content
+               :title, :content
 
     attribute_translation id: :id
     attr_accessor :content_type, :file
