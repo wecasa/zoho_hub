@@ -36,6 +36,7 @@ RSpec.describe ZohoHub::BaseRecord do
         notes = test_instance.notes
         expect(notes.class).to eq Array
         expect(notes.first.class).to eq ZohoHub::Note
+        expect(notes.first.content).to eq 'en attente des docs'
       end
     end
 
