@@ -28,7 +28,7 @@ RSpec.describe ZohoHub::BaseRecord do
 
     before do
       allow(described_class).to receive(:to_s).and_return('Lead')
-      allow(test_instance).to receive(:id).and_return('2024207000289326626')
+      allow(test_instance).to receive(:id).and_return('123456789')
     end
 
     it 'fetchs notes from the record' do
@@ -41,9 +41,6 @@ RSpec.describe ZohoHub::BaseRecord do
     end
 
     context 'without any notes' do
-      before do
-        allow(test_instance).to receive(:id).and_return('2024207000331917003')
-      end
 
       it 'returns empty array' do
         VCR.use_cassette('notes_get_none') do
