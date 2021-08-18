@@ -41,7 +41,6 @@ RSpec.describe ZohoHub::BaseRecord do
     end
 
     context 'without any notes' do
-
       it 'returns empty array' do
         VCR.use_cassette('notes_get_none') do
           notes = test_instance.notes

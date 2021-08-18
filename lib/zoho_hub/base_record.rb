@@ -90,11 +90,6 @@ module ZohoHub
         new(id: id).blueprint_transitions
       end
 
-      def add_note(id:, title: '', content: '')
-        path = File.join(request_path, id, 'Notes')
-        post(path, data: [{ Note_Title: title, Note_Content: content }])
-      end
-
       def all_related(parent_module:, parent_id:)
         body = get(File.join(parent_module.constantize.request_path, parent_id, request_path))
         response = build_response(body)
@@ -209,15 +204,6 @@ module ZohoHub
       build_response(body)
     end
 
-    def notes
-      path = File.join(self.class.request_path, id, 'Notes')
-      body = get(path)
-      response = build_response(body)
-      response.data.map do |data_note|
-        ZohoHub::Note.new(data_note)
-      end || []
-    end
-
     def blueprint_transition(transition_id, data = {})
       body = put(File.join(self.class.request_path, id, 'actions/blueprint'),
                  blueprint: [{ transition_id: transition_id, data: data }])
@@ -250,6 +236,4 @@ module ZohoHub
       self.class.build_response(body)
     end
   end
-
-  require 'zoho_hub/modules/note'
 end
