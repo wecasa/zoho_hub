@@ -25,8 +25,8 @@ RSpec.describe ZohoHub::BaseRecord do
     before { allow(test_class).to receive(:request_path).and_return('Leads') }
 
     let!(:stub_delete_request) do
-      stub_request(:delete, 'https://crmsandbox.zoho.eu/crm/v2/Leads?ids=1,2').
-        to_return(status: 200, body: '' headers: {})
+      stub_request(:delete, 'https://crmsandbox.zoho.eu/crm/v2/Leads?ids=1,2')
+        .to_return(status: 200, body: '' headers: {})
     end
 
     it 'sends delete request delete for ids' do
