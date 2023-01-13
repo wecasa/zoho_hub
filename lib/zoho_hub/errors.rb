@@ -33,6 +33,8 @@ module ZohoHub
 
   class ZohoAPIError < Error; end
 
+  class UnknownError < Error; end
+
   class BlueprintTransitionNotFound < Error
     attr_reader :new_status
 
@@ -42,4 +44,21 @@ module ZohoHub
       super()
     end
   end
+
+  ERROR_CLASSES_MAPPING = {
+    'INVALID_DATA' => RecordInvalid,
+    'INVALID_TOKEN' => InvalidTokenError,
+    'INTERNAL_ERROR' => InternalError,
+    'INVALID_REQUEST' => InvalidRequestError,
+    'INVALID_QUERY' => InvalidQueryError,
+    'AUTHENTICATION_FAILURE' => AuthenticationFailure,
+    'INVALID_MODULE' => InvalidModule,
+    'NO_PERMISSION' => NoPermission,
+    'MANDATORY_NOT_FOUND' => MandatoryNotFound,
+    'RECORD_IN_BLUEPRINT' => RecordInBlueprint,
+    'TOO_MANY_REQUESTS' => TooManyRequestsError,
+    'RECORD_NOT_IN_PROCESS' => RecordNotInProcessError,
+    'RESOURCE_NOT_FOUND' => RecordNotFound,
+    'OAUTH_SCOPE_MISMATCH' => OauthScopeMismatch
+  }.freeze
 end
