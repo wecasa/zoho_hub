@@ -120,7 +120,7 @@ module ZohoHub
         conn.request :json
         conn.response :json, parser_options: { symbolize_names: true }
         if ZohoHub.configuration.debug?
-          conn.response :logger,::Logger.new($stdout), headers: true, bodies: true
+          conn.response :logger, ::Logger.new($stdout), headers: true, bodies: true
         end
         conn.adapter Faraday.default_adapter
       end

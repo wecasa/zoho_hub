@@ -12,7 +12,7 @@ RSpec.describe ZohoHub::BaseRecord do
 
     let!(:stub_delete_request) do
       stub_request(:delete, 'https://crmsandbox.zoho.eu/crm/v2/Leads?ids=1,2')
-        .to_return(status: 200, body: '', headers: { "Content-Type": "application/json" })
+        .to_return(status: 200, body: '', headers: { "Content-Type": 'application/json' })
     end
 
     it 'sends delete request delete for ids' do
@@ -29,7 +29,7 @@ RSpec.describe ZohoHub::BaseRecord do
 
     let!(:stub_find_all_request) do
       stub_request(:get, 'https://crmsandbox.zoho.eu/crm/v2/Leads?ids=1,2')
-        .to_return(status: 200, body: body.to_json, headers: { "Content-Type": "application/json" })
+        .to_return(status: 200, body: body.to_json, headers: { "Content-Type": 'application/json' })
     end
 
     it 'fetches several records' do
@@ -66,12 +66,12 @@ RSpec.describe ZohoHub::BaseRecord do
         }
       }
       stub_request(:get, "https://crmsandbox.zoho.eu/crm/v2/Leads/#{test_instance.id}/actions/blueprint")
-        .to_return(status: 200, body: body.to_json, headers: { "Content-Type": "application/json" })
+        .to_return(status: 200, body: body.to_json, headers: { "Content-Type": 'application/json' })
     end
     let!(:update_status_with_transition_stub) do
       stub_request(:put, "https://crmsandbox.zoho.eu/crm/v2/Leads/#{test_instance.id}/actions/blueprint")
         .with(body: { blueprint: [{ transition_id: 'transition-123', data: {} }] })
-        .to_return(status: 200, body: {}.to_json, headers: { "Content-Type": "application/json" })
+        .to_return(status: 200, body: {}.to_json, headers: { "Content-Type": 'application/json' })
     end
 
     before { allow(test_class).to receive(:request_path).and_return('Leads') }
@@ -88,7 +88,7 @@ RSpec.describe ZohoHub::BaseRecord do
     let(:data_notes) { { data: [{ Note_Title: 'Title', Note_Content: 'content' }] } }
     let!(:get_notes_stub) do
       stub_request(:get, "https://crmsandbox.zoho.eu/crm/v2/Leads/#{test_instance.id}/Notes")
-        .to_return(status: 200, body: data_notes.to_json, headers: { "Content-Type": "application/json" })
+        .to_return(status: 200, body: data_notes.to_json, headers: { "Content-Type": 'application/json' })
     end
 
     before { allow(test_class).to receive(:request_path).and_return('Leads') }
