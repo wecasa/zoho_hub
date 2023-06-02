@@ -88,7 +88,9 @@ RSpec.describe ZohoHub::BaseRecord do
     let(:data_notes) { { data: [{ Note_Title: 'Title', Note_Content: 'content' }] } }
     let!(:get_notes_stub) do
       stub_request(:get, "https://crmsandbox.zoho.eu/crm/v2/Leads/#{test_instance.id}/Notes")
-        .to_return(status: 200, body: data_notes.to_json, headers: { "Content-Type": 'application/json' })
+        .to_return(status: 200,
+                   body: data_notes.to_json,
+                   headers: { "Content-Type": 'application/json' })
     end
 
     before { allow(test_class).to receive(:request_path).and_return('Leads') }
