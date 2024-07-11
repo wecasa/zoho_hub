@@ -68,7 +68,7 @@ module ZohoHub
     end
 
     def access_token
-      @access_token.try(:call) || @access_token
+      @access_token.respond_to?(:call) ? @access_token.call : @access_token
     end
 
     def access_token?
