@@ -20,7 +20,7 @@ module ZohoHub
       end
     end
 
-    attr_accessor :debug, :access_token, :expires_in, :api_domain, :api_version, :refresh_token
+    attr_accessor :debug, :expires_in, :api_domain, :api_version, :refresh_token
 
     # This is a block to be run when the token is refreshed. This way you can do whatever you want
     # with the new parameters returned by the refresh method.
@@ -65,6 +65,10 @@ module ZohoHub
 
       response = with_refresh { adapter.delete(path, params) }
       response.body
+    end
+
+    def access_token
+      @access_token.try(:call) || @access_token
     end
 
     def access_token?
