@@ -59,7 +59,6 @@ RSpec.describe ZohoHub::Connection do
   end
 
   describe '#access_token' do
-
     it 'returns access_token string value' do
       expect(described_class.new(access_token: '123').access_token).to eq('123')
     end
