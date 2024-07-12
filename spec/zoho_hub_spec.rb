@@ -6,12 +6,14 @@ RSpec.describe ZohoHub do
   end
 
   describe '#on_initialize_connection' do
-    let(:initialize_connection) { -> { true } }
+    let(:initialize_connection) { double('initialize_connection', call: true) }
 
-    it "calls the proc once" do
-      ZohoHub.on_initialize_connection(&initialize_connection)
+    it 'calls the proc once' do
+      described_class.on_initialize_connection do
+        initialize_connection.call
+      end
       expect(initialize_connection).to receive(:call)
-      ZohoHub.connection.send(:adapter)
+      described_class.connection.send(:adapter)
     end
   end
 end
