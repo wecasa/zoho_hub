@@ -11,6 +11,7 @@ RSpec.describe ZohoHub do
       described_class.on_initialize_connection do
         init_connection.call
       end
+      described_class.connection.instance_variable_set(:@adapter, nil)
       described_class.connection.send(:adapter)
       expect(init_connection).to have_received(:call)
     end
