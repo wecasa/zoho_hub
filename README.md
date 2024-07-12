@@ -221,7 +221,7 @@ To use an **access token** with ZohoHub, pass it to the `ZohoHub.setup_connectio
 
 #### 4.1 Cache access token
 
-To cache you can use `on_refresh_cb`, example:
+To cache `access_token` value, configure `on_refresh` to write to a cache, example:
 ```ruby
 ZohoHub.on_refresh do |params|
   Rails.cache.write(:zoho_access_token, params[:access_token])
@@ -232,7 +232,7 @@ And pass pass a `proc` or `lambda` to `access_token`.
 
 ```ruby
 ZohoHub.setup_connection(
-  access_token: -> { ... }
+  access_token: -> { Rails.cache.fetch(:zoho_access_token) }
 )
 ```
 
