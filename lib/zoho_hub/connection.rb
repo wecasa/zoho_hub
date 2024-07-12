@@ -24,7 +24,7 @@ module ZohoHub
 
     # This is a block to be run when the token is refreshed. This way you can do whatever you want
     # with the new parameters returned by the refresh method.
-    attr_accessor :on_refresh_cb
+    attr_accessor :on_refresh_cb, :on_initialize_connection
 
     DEFAULT_DOMAIN = 'https://www.zohoapis.eu'
 
@@ -123,6 +123,7 @@ module ZohoHub
           conn.response :logger, ::Logger.new($stdout), headers: true, bodies: true
         end
         conn.adapter Faraday.default_adapter
+        @on_initialize_connection.call(conn) if @on_initialize_connection
       end
     end
   end
