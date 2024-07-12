@@ -14,6 +14,7 @@ RSpec.describe ZohoHub do
       end
       described_class.connection.send(:adapter)
       expect(initialize_connection).to have_received(:call)
+      described_class.connection.send(:adapter)
     end
   end
 end
