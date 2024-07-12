@@ -115,7 +115,7 @@ module ZohoHub
     end
 
     def adapter
-      Faraday.new(url: base_url) do |conn|
+      @faraday_connection ||= Faraday.new(url: base_url) do |conn|
         conn.headers['Authorization'] = authorization if access_token?
         conn.request :json
         conn.response :json, parser_options: { symbolize_names: true }
