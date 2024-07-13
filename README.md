@@ -113,6 +113,18 @@ ZohoHub.configure do |config|
   # config.debug      = true # this will be VERY verbose, but helps to identify bugs / problems
 end
 ```
+#### 2.1 Customize faraday connection
+
+To customize faraday connection with `on_initialize_connection`, example:
+
+```ruby
+ZohoHub.on_initialize_connection do |conn|
+  conn.adapter(:net_http_persistent, pool_size: 20) do |http|
+    http.idle_timeout = 300
+    http.read_timeout = 60
+  end
+end
+```
 
 ---
 
@@ -206,6 +218,23 @@ To use an **access token** in a manual request, include it as a request header a
 
 To use an **access token** with ZohoHub, pass it to the `ZohoHub.setup_connection` method as the
 `access_token` parameter.
+
+#### 4.1 Cache access token
+
+To cache `access_token` value, configure `on_refresh` to write to a cache, example:
+```ruby
+ZohoHub.on_refresh do |params|
+  Rails.cache.write(:zoho_access_token, params[:access_token])
+end
+```
+
+And pass pass a `proc` or `lambda` to `access_token`.
+
+```ruby
+ZohoHub.setup_connection(
+  access_token: -> { Rails.cache.fetch(:zoho_access_token) }
+)
+```
 
 ---
 
