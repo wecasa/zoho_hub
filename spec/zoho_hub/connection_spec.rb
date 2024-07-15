@@ -70,6 +70,7 @@ RSpec.describe ZohoHub::Connection do
 
   describe '#authorization' do
     subject { described_class.new(access_token: -> { '123' }).send(:authorization) }
+
     it 'returns zoho oauthtoken header value' do
       expect(subject).to eq('Zoho-oauthtoken 123')
     end
