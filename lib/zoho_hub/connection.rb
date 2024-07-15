@@ -115,7 +115,7 @@ module ZohoHub
 
     # The authorization header that must be added to every request for authorized requests.
     def authorization
-      "Zoho-oauthtoken #{@access_token}"
+      "Zoho-oauthtoken #{access_token}"
     end
 
     def adapter
