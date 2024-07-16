@@ -106,7 +106,8 @@ RSpec.describe ZohoHub::Connection do
       it 'sets the access_token value' do
         expect(connection.access_token).to eq('foo')
         expect do
-          connection.send(:with_refresh) { instance_double('Response', body: invalid_http_response) }
+          connection
+            .send(:with_refresh) { instance_double('Response', body: invalid_http_response) }
         end.to change(connection, :access_token).to eq('123')
       end
 
@@ -116,8 +117,9 @@ RSpec.describe ZohoHub::Connection do
         it 'does not change the access_token value' do
           expect(connection.access_token).to eq('bar')
           expect do
-            connection.send(:with_refresh) { instance_double('Response', body: invalid_http_response) }
-          end.not_to change(subject, :access_token)
+            connection
+              .send(:with_refresh) { instance_double('Response', body: invalid_http_response) }
+          end.not_to change(connection, :access_token)
           expect(connection.access_token).to eq('bar')
         end
       end
