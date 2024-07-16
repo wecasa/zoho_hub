@@ -85,7 +85,7 @@ RSpec.describe ZohoHub::Connection do
         api_domain: 'https://www.zohoapis.com',
         token_type: 'Bearer',
         expires_in: 3600,
-        refresh_token: "xxx"
+        refresh_token: 'xxx'
       }
     end
 
@@ -101,24 +101,24 @@ RSpec.describe ZohoHub::Connection do
     before { allow(ZohoHub::Auth).to receive(:refresh_token).and_return(access_token) }
 
     context 'when request returns invalid token' do
-      let(:subject) { described_class.new(access_token: 'foo', refresh_token: 'xxx') }
+      let(:connection) { described_class.new(access_token: 'foo', refresh_token: 'xxx') }
 
       it 'sets the access_token value' do
-        expect(subject.access_token).to eq('foo')
+        expect(connection.access_token).to eq('foo')
         expect do
-          subject.send(:with_refresh) { double(body: invalid_http_response) }
-        end.to change(subject, :access_token).to eq('123')
+          connection.send(:with_refresh) { instance_double('Response', body: invalid_http_response) }
+        end.to change(connection, :access_token).to eq('123')
       end
 
       context 'with access_token as lambda' do
-        let(:subject) { described_class.new(access_token: -> { 'bar' }, refresh_token: 'xxx') }
+        let(:connection) { described_class.new(access_token: -> { 'bar' }, refresh_token: 'xxx') }
 
         it 'does not change the access_token value' do
-          expect(subject.access_token).to eq('bar')
+          expect(connection.access_token).to eq('bar')
           expect do
-            subject.send(:with_refresh) { double(body: invalid_http_response) }
+            connection.send(:with_refresh) { instance_double('Response', body: invalid_http_response) }
           end.not_to change(subject, :access_token)
-          expect(subject.access_token).to eq('bar')
+          expect(connection.access_token).to eq('bar')
         end
       end
     end
