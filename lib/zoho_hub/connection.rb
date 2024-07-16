@@ -99,7 +99,7 @@ module ZohoHub
 
         @on_refresh_cb.call(params) if @on_refresh_cb
 
-        @access_token = params[:access_token]
+        @access_token = params[:access_token] unless @access_token.respond_to?(:call)
 
         http_response = yield
       elsif response.authentication_failure?
