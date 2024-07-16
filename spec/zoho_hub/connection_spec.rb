@@ -77,4 +77,50 @@ RSpec.describe ZohoHub::Connection do
       expect(authorization_header).to eq('Zoho-oauthtoken 123')
     end
   end
+
+  describe '#with_refresh' do
+    let(:access_token) do
+      {
+        access_token: '123',
+        api_domain: 'https://www.zohoapis.com',
+        token_type: 'Bearer',
+        expires_in: 3600,
+        refresh_token: "xxx"
+      }
+    end
+
+    let(:invalid_http_response) do
+      {
+        code: 'INVALID_TOKEN',
+        details: {},
+        message: 'invalid oauth token',
+        status: 'error'
+      }
+    end
+
+    before { allow(ZohoHub::Auth).to receive(:refresh_token).and_return(access_token) }
+
+    context 'when request returns invalid token' do
+      let(:subject) { described_class.new(access_token: 'foo', refresh_token: 'xxx') }
+
+      it 'sets the access_token value' do
+        expect(subject.access_token).to eq('foo')
+        expect do
+          subject.send(:with_refresh) { double(body: invalid_http_response) }
+        end.to change(subject, :access_token).to eq('123')
+      end
+
+      context 'with access_token as lambda' do
+        let(:subject) { described_class.new(access_token: -> { 'bar' }, refresh_token: 'xxx') }
+
+        it 'does not change the access_token value' do
+          expect(subject.access_token).to eq('bar')
+          expect do
+            subject.send(:with_refresh) { double(body: invalid_http_response) }
+          end.not_to change(subject, :access_token)
+          expect(subject.access_token).to eq('bar')
+        end
+      end
+    end
+  end
 end
