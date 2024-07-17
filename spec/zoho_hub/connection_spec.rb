@@ -113,6 +113,7 @@ RSpec.describe ZohoHub::Connection do
 
       context 'with access_token as lambda' do
         let(:connection) { described_class.new(access_token: -> { 'bar' }, refresh_token: 'xxx') }
+        let(:adapter) { connection.send(:adapter) }
 
         it 'does not change the access_token value' do
           expect(connection.access_token).to eq('bar')
@@ -121,6 +122,21 @@ RSpec.describe ZohoHub::Connection do
               .send(:with_refresh) { instance_double('Response', body: invalid_http_response) }
           end.not_to change(connection, :access_token)
           expect(connection.access_token).to eq('bar')
+        end
+      end
+    end
+
+    context 'when request has valid authorization token' do
+      context 'with access_token as lambda' do
+
+        let(:connection) { described_class.new(access_token: -> { "bar#{enum.next}" }, refresh_token: 'xxx') }
+        let(:adapter) { connection.send(:adapter) }
+        let(:enum) { [123, 456].cycle }
+
+        it 'ensures to always use the current access token value' do
+          expect(adapter.headers['Authorization']).to eq('Zoho-oauthtoken bar123')
+          connection.send(:with_refresh) { instance_double('Response', body: { data: [ { code: nil } ] }) }
+          expect(adapter.headers['Authorization']).to eq('Zoho-oauthtoken bar456')
         end
       end
     end
