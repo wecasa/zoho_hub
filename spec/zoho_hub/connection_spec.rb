@@ -113,7 +113,6 @@ RSpec.describe ZohoHub::Connection do
 
       context 'with access_token as lambda' do
         let(:connection) { described_class.new(access_token: -> { 'bar' }, refresh_token: 'xxx') }
-        let(:adapter) { connection.send(:adapter) }
 
         it 'does not change the access_token value' do
           expect(connection.access_token).to eq('bar')
