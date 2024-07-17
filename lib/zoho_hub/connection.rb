@@ -88,6 +88,8 @@ module ZohoHub
     private
 
     def with_refresh
+      adapter.headers['Authorization'] = authorization if access_token?
+
       http_response = yield
 
       response = Response.new(http_response.body)
