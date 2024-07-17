@@ -124,5 +124,23 @@ RSpec.describe ZohoHub::Connection do
         end
       end
     end
+
+    context 'when request has valid authorization token' do
+      context 'with access_token as lambda' do
+        let(:connection) do
+          described_class.new(access_token: -> { "bar#{enum.next}" }, refresh_token: 'xxx')
+        end
+        let(:adapter) { connection.send(:adapter) }
+        let(:enum) { [123, 456].cycle }
+
+        it 'ensures to always use the current access token value' do
+          expect(adapter.headers['Authorization']).to eq('Zoho-oauthtoken bar123')
+          connection.send(:with_refresh) do
+            instance_double('Response', body: { data: [{ code: nil }] })
+          end
+          expect(adapter.headers['Authorization']).to eq('Zoho-oauthtoken bar456')
+        end
+      end
+    end
   end
 end
