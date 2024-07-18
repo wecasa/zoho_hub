@@ -103,6 +103,8 @@ module ZohoHub
 
         @access_token = params[:access_token] unless @access_token.respond_to?(:call)
 
+        adapter.headers['Authorization'] = authorization if access_token?
+
         http_response = yield
       elsif response.authentication_failure?
         raise ZohoAPIError, response.msg
