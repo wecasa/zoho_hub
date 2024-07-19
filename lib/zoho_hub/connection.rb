@@ -90,6 +90,7 @@ module ZohoHub
       was_locked = @mutex.locked?
       @mutex.synchronize do
         next if was_locked
+
         params = ZohoHub::Auth.refresh_token(@refresh_token)
         @on_refresh_cb.call(params) if @on_refresh_cb
         @access_token = params[:access_token] unless @access_token.respond_to?(:call)
