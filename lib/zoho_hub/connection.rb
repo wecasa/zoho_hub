@@ -37,6 +37,7 @@ module ZohoHub
       @api_domain = api_domain || self.class.infer_api_domain
       @api_version = api_version || ZohoHub.configuration.api_version
       @refresh_token ||= refresh_token # do not overwrite if it's already set
+      @mutex = Mutex.new
     end
 
     def get(path, params = {})
@@ -85,30 +86,40 @@ module ZohoHub
       puts Rainbow("[ZohoHub] #{text}").magenta.bright
     end
 
+    def refresh_token!
+      was_locked = @mutex.locked?
+      @mutex.synchronize do
+        next if was_locked
+
+        params = ZohoHub::Auth.refresh_token(@refresh_token)
+        @on_refresh_cb.call(params) if @on_refresh_cb
+        @access_token = params[:access_token] unless @access_token.respond_to?(:call)
+      end
+    end
+
     private
 
-    def with_refresh
-      adapter.headers['Authorization'] = authorization if access_token?
-
-      http_response = yield
+    def with_refresh(&block)
+      http_response = with_authorization(&block)
 
       response = Response.new(http_response.body)
 
       # Try to refresh the token and try again
       if (response.invalid_token? || response.authentication_failure?) && refresh_token?
         log "Refreshing outdated token... #{@access_token}"
-        params = ZohoHub::Auth.refresh_token(@refresh_token)
+        refresh_token!
 
-        @on_refresh_cb.call(params) if @on_refresh_cb
-
-        @access_token = params[:access_token] unless @access_token.respond_to?(:call)
-
-        http_response = yield
+        http_response = with_authorization(&block)
       elsif response.authentication_failure?
         raise ZohoAPIError, response.msg
       end
 
       http_response
+    end
+
+    def with_authorization
+      adapter.headers['Authorization'] = authorization if access_token?
+      yield
     end
 
     def base_url
