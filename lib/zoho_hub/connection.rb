@@ -37,7 +37,7 @@ module ZohoHub
       @api_domain = api_domain || self.class.infer_api_domain
       @api_version = api_version || ZohoHub.configuration.api_version
       @refresh_token ||= refresh_token # do not overwrite if it's already set
-      @mutext = Mutex.new
+      @mutex = Mutex.new
     end
 
     def get(path, params = {})
@@ -87,9 +87,9 @@ module ZohoHub
     end
 
     def refresh_token!
-      owned_lock = mutex.locked?
+      was_locked = @mutex.locked?
       @mutex.synchronize do
-        next unless owned_lock
+        next if was_locked
         params = ZohoHub::Auth.refresh_token(@refresh_token)
         @on_refresh_cb.call(params) if @on_refresh_cb
         @access_token = params[:access_token] unless @access_token.respond_to?(:call)
