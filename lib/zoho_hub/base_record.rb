@@ -165,6 +165,16 @@ module ZohoHub
         false
       end
 
+      def associate_tags(ressource_ids, tag_names = [])
+        responses = []
+        ressource_ids.each_slice(100) do |ids|
+          parameters = "add_tags?tag_names=#{tag_names.join(',')}&ids=#{ids.join(',')}"
+          url = File.join(self.class.request_path, 'actions', parameters)
+          responses << build_response(post(url)).data.first
+        end
+        responses
+      end
+
       alias exist? exists?
 
       # rubocop:disable Metrics/AbcSize
@@ -225,7 +235,7 @@ module ZohoHub
 
     def associate_tags(tag_names = [])
       url = File.join(
-        self.class.request_path, id, 'actions', "add_tags?tag_names=#{tag_names.join(', ')}"
+        self.class.request_path, id, 'actions', "add_tags?tag_names=#{tag_names.join(',')}"
       )
       build_response(post(url)).data.first
     end
