@@ -223,6 +223,12 @@ module ZohoHub
       build_response(body)
     end
 
+    def associate_tag(tag_name)
+      body = post(File.join(self.class.request_path, id, "actions", "add_tags?tag_names=#{tag_name}"))
+      response = build_response(body)
+      response.data.first
+    end
+
     def delete_record
       body = delete(File.join(self.class.request_path, id))
 
