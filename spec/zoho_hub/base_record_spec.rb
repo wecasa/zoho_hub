@@ -41,6 +41,37 @@ RSpec.describe ZohoHub::BaseRecord do
     end
   end
 
+  describe '.associate_tags' do
+    before { allow(test_class).to receive(:request_path).and_return('Leads') }
+
+    let!(:stub_add_tags_request) do
+      stub_request(:post, 'https://crmsandbox.zoho.eu/crm/v2/Leads/actions/add_tags?tag_names=tag1,tag2&ids=1,2')
+        .to_return(status: 200, body: '', headers: { "Content-Type": 'application/json' })
+    end
+
+    it 'associate tags to records' do
+      test_class.associate_tags([1, 2], %w[tag1 tag2])
+      expect(stub_add_tags_request).to have_been_requested
+    end
+
+    context 'when the request is too big' do
+      let!(:stub_add_tags_request_first_batch) do
+        stub_request(:post, "https://crmsandbox.zoho.eu/crm/v2/Leads/actions/add_tags?tag_names=tag1,tag2&ids=#{(1..100).to_a.join(',')}")
+          .to_return(status: 200, body: '', headers: { "Content-Type": 'application/json' })
+      end
+      let!(:stub_add_tags_request_second_batch) do
+        stub_request(:post, "https://crmsandbox.zoho.eu/crm/v2/Leads/actions/add_tags?tag_names=tag1,tag2&ids=#{(101..200).to_a.join(',')}")
+          .to_return(status: 200, body: '', headers: { "Content-Type": 'application/json' })
+      end
+
+      it 'splits the request in batches' do
+        test_class.associate_tags((1..200).to_a, %w[tag1 tag2])
+        expect(stub_add_tags_request_first_batch).to have_been_requested
+        expect(stub_add_tags_request_second_batch).to have_been_requested
+      end
+    end
+  end
+
   describe '#build_response' do
     context 'with an empty string and a "false" boolean' do
       let(:body) { { data: [{ My_String: '', My_Bool: false }] } }
@@ -80,6 +111,22 @@ RSpec.describe ZohoHub::BaseRecord do
       test_instance.blueprint_transition('Closed')
       expect(get_transition_id_stub).to have_been_requested
       expect(update_status_with_transition_stub).to have_been_requested
+    end
+  end
+
+  describe '#associate_tags' do
+    let(:test_instance) { test_class.new(id: '123456789') }
+    let(:tag_names) { %w[tag1 tag2] }
+    let!(:associate_tags_stub) do
+      stub_request(:post, "https://crmsandbox.zoho.eu/crm/v2/Leads/#{test_instance.id}/actions/add_tags?tag_names=tag1,tag2")
+        .to_return(status: 200, body: {}.to_json, headers: { "Content-Type": 'application/json' })
+    end
+
+    before { allow(test_class).to receive(:request_path).and_return('Leads') }
+
+    it 'associates tags to the record' do
+      test_instance.associate_tags(tag_names)
+      expect(associate_tags_stub).to have_been_requested
     end
   end
 

@@ -165,11 +165,11 @@ module ZohoHub
         false
       end
 
-      def associate_tags(ressource_ids, tag_names = [])
+      def associate_tags(resource_ids, tag_names = [])
         responses = []
-        ressource_ids.each_slice(100) do |ids|
+        resource_ids.each_slice(100) do |ids|
           parameters = "add_tags?tag_names=#{tag_names.join(',')}&ids=#{ids.join(',')}"
-          url = File.join(self.class.request_path, 'actions', parameters)
+          url = File.join(request_path, 'actions', parameters)
           responses << build_response(post(url)).data.first
         end
         responses
