@@ -361,6 +361,15 @@ Adding notes:
 Lead.add_note(id: lead.id, title: 'Note title', content: 'Note content')
 ```
 
+Associate tags to records:
+
+```ruby
+Lead.associate_tags([id1, id2], %w[tag1 tag2])
+
+# Or
+lead.associate_tags(%w[tag1 tag2])
+```
+
 Related records:
 
 ```ruby
