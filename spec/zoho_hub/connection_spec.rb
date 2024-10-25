@@ -107,7 +107,7 @@ RSpec.describe ZohoHub::Connection do
         expect(connection.access_token).to eq('foo')
         expect do
           connection
-            .send(:with_refresh) { instance_double(Response, body: invalid_http_response) }
+            .send(:with_refresh) { instance_double(Faraday::Response, body: invalid_http_response) }
         end.to change(connection, :access_token).to eq('123')
       end
 
@@ -118,7 +118,10 @@ RSpec.describe ZohoHub::Connection do
           expect(connection.access_token).to eq('bar')
           expect do
             connection
-              .send(:with_refresh) { instance_double(Response, body: invalid_http_response) }
+              .send(:with_refresh) do
+              instance_double(Faraday::Response,
+                              body: invalid_http_response)
+            end
           end.not_to change(connection, :access_token)
           expect(connection.access_token).to eq('bar')
         end
@@ -136,7 +139,7 @@ RSpec.describe ZohoHub::Connection do
         it 'ensures to always use the current access token value' do
           expect(adapter.headers['Authorization']).to eq('Zoho-oauthtoken bar123')
           connection.send(:with_refresh) do
-            instance_double(Response, body: { data: [{ code: nil }] })
+            instance_double(Faraday::Response, body: { data: [{ code: nil }] })
           end
           expect(adapter.headers['Authorization']).to eq('Zoho-oauthtoken bar456')
         end
