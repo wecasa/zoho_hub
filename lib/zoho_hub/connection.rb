@@ -30,6 +30,9 @@ module ZohoHub
 
     BASE_PATH = '/crm/'
 
+    SUPPORTED_HTTP_METHODS = %i[get post put delete].freeze
+    SERVER_ERRORS = [500, 502, 503, 504].freeze
+
     def initialize(access_token: nil, api_domain: nil, api_version: nil, expires_in: 3600,
                    refresh_token: nil)
       @access_token = access_token
@@ -40,32 +43,15 @@ module ZohoHub
       @mutex = Mutex.new
     end
 
-    def get(path, params = {})
-      log "GET #{path} with #{params}"
+    SUPPORTED_HTTP_METHODS.each do |method|
+      define_method(method) do |path, params = {}|
+        log "#{method.upcase} #{path} with #{params}"
 
-      response = with_refresh { adapter.get(path, params) }
-      response.body
-    end
+        response = with_refresh { adapter.send(method, path, params) }
+        raise ZohoHub::InternalError, response.body if SERVER_ERRORS.include?(response.env.status)
 
-    def post(path, params = {})
-      log "POST #{path} with #{params}"
-
-      response = with_refresh { adapter.post(path, params) }
-      response.body
-    end
-
-    def put(path, params = {})
-      log "PUT #{path} with #{params}"
-
-      response = with_refresh { adapter.put(path, params) }
-      response.body
-    end
-
-    def delete(path, params = {})
-      log "DELETE #{path} with #{params}"
-
-      response = with_refresh { adapter.delete(path, params) }
-      response.body
+        response.body
+      end
     end
 
     def access_token
