@@ -38,7 +38,7 @@ module ZohoHub
         response = build_response(body)
 
         if response.empty?
-          raise RecordNotFound, "Couldn't find #{request_path.singularize} with 'id'=#{id}"
+          raise RecordNotFoundError, "Couldn't find #{request_path.singularize} with 'id'=#{id}"
         end
 
         new(response.data.first)
@@ -50,7 +50,7 @@ module ZohoHub
         response = build_response(body)
 
         if response.empty?
-          raise RecordNotFound, "Couldn't find #{request_path.singularize} with 'ids'=#{ids}"
+          raise RecordNotFoundError, "Couldn't find #{request_path.singularize} with 'ids'=#{ids}"
         end
 
         response.data.map { |json| new(json) }
@@ -166,7 +166,7 @@ module ZohoHub
 
       def exists?(id)
         !find(id).nil?
-      rescue RecordNotFound
+      rescue RecordNotFoundError
         false
       end
 
@@ -186,7 +186,8 @@ module ZohoHub
         response = Response.new(body)
 
         ERROR_CODES.each do |error_code|
-          raise error_code.classify.constantize, response.msg if response.send("#{error_code}?")
+          class_name = error_code.end_with?('_error') ? error_code : "#{error_code}_error"
+          raise class_name.classify.constantize, response.msg if response.send("#{error_code}?")
         end
 
         response
