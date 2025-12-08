@@ -33,6 +33,8 @@ module ZohoHub
 
   class ZohoAPIError < Error; end
 
+  class ResponseFormatError < Error; end
+
   class BlueprintTransitionNotFound < Error
     attr_reader :new_status
 
