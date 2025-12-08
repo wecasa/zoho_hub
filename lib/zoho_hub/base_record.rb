@@ -21,6 +21,11 @@ module ZohoHub
     # Minimum number of records to fetch when fetching all.
     MIN_RECORDS = 2
 
+    ERROR_CODES = %w[invalid_token internal_error invalid_request invalid_query 
+                     invalid_data invalid_module no_permission authentication_failure 
+                     mandatory_not_found record_in_blueprint too_many_requests 
+                     record_not_in_process record_not_found oauth_scope_mismatch].freeze
+
     class << self
       def request_path(name = nil)
         @request_path = name if name
@@ -183,20 +188,9 @@ module ZohoHub
       def build_response(body)
         response = Response.new(body)
 
-        raise InvalidTokenError, response.msg if response.invalid_token?
-        raise InternalError, response.msg if response.internal_error?
-        raise InvalidRequestError, response.msg if response.invalid_request?
-        raise InvalidQueryError, response.msg if response.invalid_query?
-        raise RecordInvalid, response.msg if response.invalid_data?
-        raise InvalidModule, response.msg if response.invalid_module?
-        raise NoPermission, response.msg if response.no_permission?
-        raise AuthenticationFailure, response.msg if response.authentication_failure?
-        raise MandatoryNotFound, response.msg if response.mandatory_not_found?
-        raise RecordInBlueprint, response.msg if response.record_in_blueprint?
-        raise TooManyRequestsError, response.msg if response.too_many_requests?
-        raise RecordNotInProcessError, response.msg if response.record_not_in_process?
-        raise RecordNotFound, response.msg if response.record_not_found?
-        raise OauthScopeMismatch, response.msg if response.oauth_scope_mismatch?
+        ERROR_CODES.each do |error_code|
+          raise error_code.classify.constantize, response.msg if response.send("#{error_code}?")
+        end
 
         response
       end
