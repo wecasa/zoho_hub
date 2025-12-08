@@ -21,9 +21,9 @@ module ZohoHub
     # Minimum number of records to fetch when fetching all.
     MIN_RECORDS = 2
 
-    ERROR_CODES = %w[invalid_token internal_error invalid_request invalid_query 
-                     invalid_data invalid_module no_permission authentication_failure 
-                     mandatory_not_found record_in_blueprint too_many_requests 
+    ERROR_CODES = %w[invalid_token internal_error invalid_request invalid_query
+                     invalid_data invalid_module no_permission authentication_failure
+                     mandatory_not_found record_in_blueprint too_many_requests
                      record_not_in_process record_not_found oauth_scope_mismatch].freeze
 
     class << self
@@ -182,9 +182,6 @@ module ZohoHub
 
       alias exist? exists?
 
-      # rubocop:disable Metrics/AbcSize
-      # rubocop:disable Metrics/CyclomaticComplexity
-      # rubocop:disable Metrics/PerceivedComplexity
       def build_response(body)
         response = Response.new(body)
 
@@ -194,9 +191,6 @@ module ZohoHub
 
         response
       end
-      # rubocop:enable Metrics/AbcSize
-      # rubocop:enable Metrics/CyclomaticComplexity
-      # rubocop:enable Metrics/PerceivedComplexity
     end
 
     def initialize(params = {})
