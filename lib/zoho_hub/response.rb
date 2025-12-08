@@ -67,8 +67,9 @@ module ZohoHub
     end
 
     def data
-      data = @params[:data] if @params[:data]
-      data || @params
+      raise ResponseFormatError, "Response is not a hash: #{@params}" unless @params.is_a?(Hash)
+
+      @params[:data] || @params
     end
 
     def msg

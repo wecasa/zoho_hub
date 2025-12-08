@@ -3,7 +3,7 @@
 module ZohoHub
   class Error < StandardError; end
 
-  class RecordNotFound < Error; end
+  class RecordNotFoundError < Error; end
 
   class RecordInvalid < Error; end
 
@@ -15,23 +15,25 @@ module ZohoHub
 
   class InvalidQueryError < Error; end
 
-  class InvalidModule < Error; end
+  class InvalidModuleError < Error; end
 
-  class NoPermission < Error; end
+  class NoPermissionError < Error; end
 
-  class AuthenticationFailure < Error; end
+  class AuthenticationFailureError < Error; end
 
-  class MandatoryNotFound < Error; end
+  class MandatoryNotFoundError < Error; end
 
-  class RecordInBlueprint < Error; end
+  class RecordInBlueprintError < Error; end
 
   class TooManyRequestsError < Error; end
 
   class RecordNotInProcessError < Error; end
 
-  class OauthScopeMismatch < Error; end
+  class OauthScopeMismatchError < Error; end
 
   class ZohoAPIError < Error; end
+
+  class ResponseFormatError < Error; end
 
   class BlueprintTransitionNotFound < Error
     attr_reader :new_status

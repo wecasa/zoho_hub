@@ -45,7 +45,7 @@ module ZohoHub
         response = Response.new(body)
 
         raise RecordInvalid, response.msg if response.invalid_data?
-        raise MandatoryNotFound, response.msg if response.mandatory_not_found?
+        raise MandatoryNotFoundError, response.msg if response.mandatory_not_found?
 
         response.data
       end
